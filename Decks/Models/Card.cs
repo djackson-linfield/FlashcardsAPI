@@ -15,5 +15,5 @@ public partial class Card
 
     public long? TimesStudied { get; set; }
 
-    public virtual Deck? Deck { get; set; }
+/*    public virtual Deck? Deck { get; set; }*/
 }

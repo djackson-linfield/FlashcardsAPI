@@ -11,10 +11,9 @@ using Decks.Models;
 namespace Decks.Controllers
 {
     [ApiController]
-    [Route("api/deck")]
-    public class DecksController : Controller
+    [Route("api/tag")]
+    public class TagController : Controller
     {
-
         [HttpGet("[action]")]
         public IActionResult Get()
         {
@@ -23,19 +22,19 @@ namespace Decks.Controllers
             {
                 Console.WriteLine("DecksController.GetDecks() fetching decks");
 
-                List<Deck> decks = new List<Deck>();
+                List<Tag> tags = new List<Tag>();
 
                 using (DecksContext db = new DecksContext())
                 {
 
-                    decks = db.Decks.ToList();
+                    tags = db.Tags.ToList();
 
-                    if (decks == null)
+                    if (tags == null)
                     {
                         return new ObjectResult("No users to display.");
                     }
 
-                    return new ObjectResult(decks);
+                    return new ObjectResult(tags);
 
                 }
 
@@ -43,26 +42,6 @@ namespace Decks.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("UsersController.GetItems() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
-                return StatusCode(500);
-            }
-        }
-
-        [HttpPost("[action]")]
-        public IActionResult Post([FromBody] Deck newDeck)
-        {
-            try
-            {
-                Console.WriteLine("posting new deck");
-                using (DecksContext db = new DecksContext())
-                {
-                    db.Decks.Add(newDeck);
-                    db.SaveChanges();
-                    return StatusCode(200);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("DecksController.Post() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
                 return StatusCode(500);
             }
         }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Decks.Controllers
 {
     [ApiController]
-    [Route("api/users")]
+    [Route("api/user")]
     public class UserController : ControllerBase
     {
 
@@ -43,7 +43,7 @@ namespace Decks.Controllers
             }
         }
         [HttpGet("[action]")]
-        public IActionResult GetUsers()
+        public IActionResult Get()
         {
 
             try
@@ -73,5 +73,7 @@ namespace Decks.Controllers
                 return StatusCode(500);
             }
         }
+
+
     }
 }

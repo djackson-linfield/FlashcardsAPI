@@ -11,10 +11,9 @@ using Decks.Models;
 namespace Decks.Controllers
 {
     [ApiController]
-    [Route("api/deck")]
-    public class DecksController : Controller
+    [Route("api/progress")]
+    public class ProgressController : Controller
     {
-
         [HttpGet("[action]")]
         public IActionResult Get()
         {
@@ -23,19 +22,19 @@ namespace Decks.Controllers
             {
                 Console.WriteLine("DecksController.GetDecks() fetching decks");
 
-                List<Deck> decks = new List<Deck>();
+                List<Progress> progress = new List<Progress>();
 
                 using (DecksContext db = new DecksContext())
                 {
 
-                    decks = db.Decks.ToList();
+                    progress = db.Progresses.ToList();
 
-                    if (decks == null)
+                    if (progress == null)
                     {
                         return new ObjectResult("No users to display.");
                     }
 
-                    return new ObjectResult(decks);
+                    return new ObjectResult(progress);
 
                 }
 
@@ -47,23 +46,21 @@ namespace Decks.Controllers
             }
         }
 
-        [HttpPost("[action]")]
-        public IActionResult Post([FromBody] Deck newDeck)
+        [HttpPut("[action]")]
+        public IActionResult Put([FromBody] Progress value)
         {
-            try
+
+            using (DecksContext db = new DecksContext())
             {
-                Console.WriteLine("posting new deck");
-                using (DecksContext db = new DecksContext())
-                {
-                    db.Decks.Add(newDeck);
-                    db.SaveChanges();
-                    return StatusCode(200);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("DecksController.Post() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
-                return StatusCode(500);
+                var progress = db.Progresses
+                        .Where(p => p.ProgressId == value.ProgressId)
+                        .Select(p => new { Progress = p })
+                        .FirstOrDefault();
+                if (progress == null) return StatusCode(500);
+                progress.Progress.CardsStudied = value.CardsStudied;
+                progress.Progress.CardsMastered = value.CardsMastered;
+                db.SaveChanges();
+                return Ok();
             }
         }
     }

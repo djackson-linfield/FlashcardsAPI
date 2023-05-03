@@ -40,10 +40,10 @@ public partial class DecksContext : DbContext
             entity.Property(e => e.Front).HasMaxLength(50);
             entity.Property(e => e.TimesStudied).HasColumnName("Times_Studied");
 
-            entity.HasOne(d => d.Deck).WithMany(p => p.Cards)
+/*            entity.HasOne(d => d.Deck).WithMany(p => p.Cards)
                 .HasForeignKey(d => d.DeckId)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_Card_Deck");
+                .HasConstraintName("FK_Card_Deck");*/
         });
 
         modelBuilder.Entity<Deck>(entity =>
@@ -55,7 +55,7 @@ public partial class DecksContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(50);
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
-            entity.HasOne(d => d.Tag).WithMany(p => p.Decks)
+/*            entity.HasOne(d => d.Tag).WithMany(p => p.Decks)
                 .HasForeignKey(d => d.TagId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Deck_Tag");
@@ -63,7 +63,7 @@ public partial class DecksContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Decks)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_Deck_User");
+                .HasConstraintName("FK_Deck_User");*/
         });
 
         modelBuilder.Entity<Progress>(entity =>
@@ -73,10 +73,10 @@ public partial class DecksContext : DbContext
             entity.Property(e => e.CardsMastered).HasColumnName("Cards_Mastered");
             entity.Property(e => e.CardsStudied).HasColumnName("Cards_Studied");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Progresses)
+/*            entity.HasOne(d => d.User).WithMany(p => p.Progresses)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_Progress_User");
+                .HasConstraintName("FK_Progress_User");*/
         });
 
         modelBuilder.Entity<Tag>(entity =>

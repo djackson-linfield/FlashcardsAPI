@@ -10,159 +10,63 @@ using Decks.Models;
 
 namespace Decks.Controllers
 {
+    [ApiController]
+    [Route("api/cards")]
     public class CardsController : Controller
     {
-        private readonly DecksContext _context;
 
-        public CardsController(DecksContext context)
+        [HttpGet("[action]")]
+        public IActionResult Get()
         {
-            _context = context;
-        }
 
-        // GET: Cards
-        public async Task<IActionResult> Index()
-        {
-            var decksContext = _context.Cards.Include(c => c.Deck);
-            return View(await decksContext.ToListAsync());
-        }
-
-        // GET: Cards/Details/5
-        public async Task<IActionResult> Details(long? id)
-        {
-            if (id == null || _context.Cards == null)
+            try
             {
-                return NotFound();
-            }
+                Console.WriteLine("DecksController.GetDecks() fetching decks");
 
-            var card = await _context.Cards
-                .Include(c => c.Deck)
-                .FirstOrDefaultAsync(m => m.CardId == id);
-            if (card == null)
-            {
-                return NotFound();
-            }
+                List<Card> cards = new List<Card>();
 
-            return View(card);
-        }
-
-        // GET: Cards/Create
-        public IActionResult Create()
-        {
-            ViewData["DeckId"] = new SelectList(_context.Decks, "DeckId", "DeckId");
-            return View();
-        }
-
-        // POST: Cards/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CardId,Front,Back,DeckId,TimesStudied")] Card card)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(card);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["DeckId"] = new SelectList(_context.Decks, "DeckId", "DeckId", card.DeckId);
-            return View(card);
-        }
-
-        // GET: Cards/Edit/5
-        public async Task<IActionResult> Edit(long? id)
-        {
-            if (id == null || _context.Cards == null)
-            {
-                return NotFound();
-            }
-
-            var card = await _context.Cards.FindAsync(id);
-            if (card == null)
-            {
-                return NotFound();
-            }
-            ViewData["DeckId"] = new SelectList(_context.Decks, "DeckId", "DeckId", card.DeckId);
-            return View(card);
-        }
-
-        // POST: Cards/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("CardId,Front,Back,DeckId,TimesStudied")] Card card)
-        {
-            if (id != card.CardId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                using (DecksContext db = new DecksContext())
                 {
-                    _context.Update(card);
-                    await _context.SaveChangesAsync();
+
+                    cards = db.Cards.ToList();
+
+                    if (cards == null)
+                    {
+                        return new ObjectResult("No users to display.");
+                    }
+
+                    return new ObjectResult(cards);
+
                 }
-                catch (DbUpdateConcurrencyException)
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("UsersController.GetItems() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpPost("[action]")]
+        public IActionResult Post([FromBody]Card newCard)
+        {
+            try
+            {
+                Console.WriteLine("posting new card");
+                using(DecksContext db = new DecksContext())
                 {
-                    if (!CardExists(card.CardId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    db.Cards.Add(newCard);
+                    db.SaveChanges();
+                    return StatusCode(200);
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["DeckId"] = new SelectList(_context.Decks, "DeckId", "DeckId", card.DeckId);
-            return View(card);
+            catch (Exception ex)
+            {
+                Console.WriteLine("TourneyController.Post() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
+                return StatusCode(500);
+            }
         }
 
-        // GET: Cards/Delete/5
-        public async Task<IActionResult> Delete(long? id)
-        {
-            if (id == null || _context.Cards == null)
-            {
-                return NotFound();
-            }
 
-            var card = await _context.Cards
-                .Include(c => c.Deck)
-                .FirstOrDefaultAsync(m => m.CardId == id);
-            if (card == null)
-            {
-                return NotFound();
-            }
-
-            return View(card);
-        }
-
-        // POST: Cards/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(long id)
-        {
-            if (_context.Cards == null)
-            {
-                return Problem("Entity set 'DecksContext.Cards'  is null.");
-            }
-            var card = await _context.Cards.FindAsync(id);
-            if (card != null)
-            {
-                _context.Cards.Remove(card);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool CardExists(long id)
-        {
-          return (_context.Cards?.Any(e => e.CardId == id)).GetValueOrDefault();
-        }
     }
 }

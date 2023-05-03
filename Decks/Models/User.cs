@@ -11,7 +11,7 @@ public partial class User
 
     public string? Password { get; set; }
 
-    public virtual ICollection<Deck> Decks { get; set; } = new List<Deck>();
+/*    public virtual ICollection<Deck> Decks { get; set; } = new List<Deck>();
 
-    public virtual ICollection<Progress> Progresses { get; set; } = new List<Progress>();
+    public virtual ICollection<Progress> Progresses { get; set; } = new List<Progress>();*/
 }

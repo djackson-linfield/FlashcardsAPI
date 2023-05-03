@@ -9,5 +9,5 @@ public partial class Tag
 
     public string? Name { get; set; }
 
-    public virtual ICollection<Deck> Decks { get; set; } = new List<Deck>();
+/*    public virtual ICollection<Deck> Decks { get; set; } = new List<Deck>();*/
 }

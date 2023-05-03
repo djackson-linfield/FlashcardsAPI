@@ -15,9 +15,9 @@ public partial class Deck
 
     public long? TagId { get; set; }
 
-    public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
+/*    public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
 
     public virtual Tag? Tag { get; set; }
 
-    public virtual User? User { get; set; }
+    public virtual User? User { get; set; }*/
 }
