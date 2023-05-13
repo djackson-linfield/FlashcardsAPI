@@ -73,6 +73,30 @@ namespace Decks.Controllers
                 return StatusCode(500);
             }
         }
+        [HttpGet("[action]/{username}")]
+        public IActionResult GetSingleUser(String username)
+        {
+            try
+            {
+                Console.WriteLine("UserController.Post() posting a new item");
+
+                using (DecksContext db = new DecksContext())
+                {
+                    var users = db.Users
+                        .Where(u => u.Name == username)
+                        .Select(u => new { User = u })
+                        .FirstOrDefault();
+                    if (users == null) return StatusCode(500);
+                    return new ObjectResult(users.User.UserId);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("CustomerController.Post() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
+                return StatusCode(500);
+            }
+        }
 
 
     }
