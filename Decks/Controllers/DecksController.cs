@@ -97,7 +97,7 @@ namespace Decks.Controllers
             }
         }
         [HttpDelete("[action]")]
-        public IActionResult DeleteListing(int deckId)
+        public IActionResult Delete(int deckId)
         {
             try
             {
