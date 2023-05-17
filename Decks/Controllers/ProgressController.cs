@@ -63,5 +63,29 @@ namespace Decks.Controllers
                 return Ok();
             }
         }
+        [HttpGet("[action]/{userId}")]
+        public IActionResult GetProgressByUser(long userId)
+        {
+            try
+            {
+                Console.WriteLine("UserController.Post() posting a new item");
+
+                using (DecksContext db = new DecksContext())
+                {
+                    var progress = db.Progresses
+                        .Where(u => u.UserId == userId)
+                        .Select(u => new { Progress = u })
+                        .FirstOrDefault();
+                    if (progress == null) return StatusCode(500);
+                    return new ObjectResult(progress);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("CustomerController.Post() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
+                return StatusCode(500);
+            }
+        }
     }
 }

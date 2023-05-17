@@ -50,7 +50,6 @@ public partial class DecksContext : DbContext
         {
             entity.ToTable("Deck");
 
-            entity.Property(e => e.DeckId).ValueGeneratedNever();
             entity.Property(e => e.Description).HasMaxLength(50);
             entity.Property(e => e.Name).HasMaxLength(50);
             entity.Property(e => e.UserId).HasColumnName("UserID");

@@ -55,7 +55,12 @@ namespace Decks.Controllers
                 Console.WriteLine("posting new card");
                 using(DecksContext db = new DecksContext())
                 {
-                    db.Cards.Add(newCard);
+                    Card card = new Card();
+                    card.Front = newCard.Front;
+                    card.Back = newCard.Back;
+                    card.DeckId = newCard.DeckId;
+                    card.TimesStudied = newCard.TimesStudied;
+                    db.Cards.Add(card);
                     db.SaveChanges();
                     return StatusCode(200);
                 }
@@ -63,6 +68,31 @@ namespace Decks.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("TourneyController.Post() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("[action]/{deckId}")]
+        public IActionResult GetCardsByDeck(long deckId)
+        {
+            try
+            {
+                Console.WriteLine("UserController.Post() posting a new item");
+
+                using (DecksContext db = new DecksContext())
+                {
+                    var cards = db.Cards
+                        .Where(u => u.DeckId == deckId)
+                        .Select(u => new { Deck = u })
+                        .ToList();
+                    if (cards == null) return StatusCode(500);
+                    return new ObjectResult(cards);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("CustomerController.Post() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
                 return StatusCode(500);
             }
         }

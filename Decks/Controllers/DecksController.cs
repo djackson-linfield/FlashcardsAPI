@@ -55,7 +55,12 @@ namespace Decks.Controllers
                 Console.WriteLine("posting new deck");
                 using (DecksContext db = new DecksContext())
                 {
-                    db.Decks.Add(newDeck);
+                    Deck deck = new Deck();
+                    deck.Name = newDeck.Name;
+                    deck.Description = newDeck.Description;
+                    deck.UserId = newDeck.UserId;
+                    deck.TagId = newDeck.TagId;
+                    db.Decks.Add(deck);
                     db.SaveChanges();
                     return StatusCode(200);
                 }
@@ -63,6 +68,62 @@ namespace Decks.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("DecksController.Post() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("[action]/{userId}")]
+        public IActionResult GetDecksByUser(long userId)
+        {
+            try
+            {
+                Console.WriteLine("UserController.Post() posting a new item");
+
+                using (DecksContext db = new DecksContext())
+                {
+                    var decks = db.Decks
+                        .Where(u => u.UserId == userId)
+                        .Select(u => new { Deck = u })
+                        .ToList();
+                    if (decks == null) return StatusCode(500);
+                    return new ObjectResult(decks);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("CustomerController.Post() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
+                return StatusCode(500);
+            }
+        }
+        [HttpDelete("[action]")]
+        public IActionResult DeleteListing(int deckId)
+        {
+            try
+            {
+                Console.WriteLine("ListingController.DeleteListing() deleting listing with ID " + deckId);
+
+                using (DecksContext db = new DecksContext())
+                {
+                    // Check if listing exists
+                    var listing = db.Decks.FirstOrDefault(x => x.DeckId == deckId);
+                    if (listing == null)
+                    {
+                        return NotFound("Listing not found");
+                    }
+
+                    // Remove the listing from the database
+                    db.Decks.Remove(listing);
+                    db.SaveChanges();
+
+                    // Return a confirmation message along with the OK status code
+                    string message = "Deck with ID " + deckId + " has been deleted";
+                    return new ObjectResult(message) { StatusCode = 200 };
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ListingController.DeleteListing() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
                 return StatusCode(500);
             }
         }
