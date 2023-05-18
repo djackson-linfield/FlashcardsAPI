@@ -97,6 +97,25 @@ namespace Decks.Controllers
             }
         }
 
+        [HttpPut("[action]")]
+        public IActionResult Put([FromBody] Card value)
+        {
+
+            using (DecksContext db = new DecksContext())
+            {
+                var card = db.Cards
+                        .Where(p => p.CardId == value.CardId)
+                        .Select(p => new { Card = p })
+                        .FirstOrDefault();
+                if (card == null) return StatusCode(500);
+                card.Card.TimesStudied = value.TimesStudied;
+                card.Card.Front = value.Front;
+                card.Card.Back = value.Back;
+                db.SaveChanges();
+                return Ok();
+            }
+        }
+
 
     }
 }

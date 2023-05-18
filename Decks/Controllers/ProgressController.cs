@@ -87,5 +87,28 @@ namespace Decks.Controllers
                 return StatusCode(500);
             }
         }
+        [HttpPost("[action]")]
+        public IActionResult Post([FromBody] Progress newProgress)
+        {
+            try
+            {
+                Console.WriteLine("posting new deck");
+                using (DecksContext db = new DecksContext())
+                {
+                    Progress progress = new Progress();
+                    progress.UserId = newProgress.UserId;
+                    progress.CardsMastered = newProgress.CardsMastered;
+                    progress.CardsStudied = newProgress.CardsStudied;
+                    db.Progresses.Add(progress);
+                    db.SaveChanges();
+                    return StatusCode(200);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("DecksController.Post() got error: " + ex.Message + ", Stack = " + ex.StackTrace);
+                return StatusCode(500);
+            }
+        }
     }
 }
